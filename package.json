@@ -1,0 +1,28 @@
+{
+  "name": "lesson8",
+  "version": "1.0.0",
+  "description": "ND-2 Socket.io",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nmalitsky/lesson8.git"
+  },
+  "keywords": [
+    "socket.io",
+    "chat"
+  ],
+  "author": "Nikolay Malitsky",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nmalitsky/lesson8/issues"
+  },
+  "homepage": "https://github.com/nmalitsky/lesson8#readme",
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "express": "^4.14.0",
+    "socket.io": "^1.5.1"
+  }
+}

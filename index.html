@@ -1,0 +1,111 @@
+<html>
+<head>
+	<title>Socket.io Chat</title>
+	<script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+	<script>
+	        let user;
+		
+		let socket = io('http://localhost:3000');
+
+		socket.on('connect' , () => {
+			console.log('connect to the chat server - open socket');
+		});
+
+		function message(message) {
+			if(user == undefined) {
+				console.log('User is undefined. Must do command: login("user_name_here")');
+			} else {
+				socket.emit('message', {user: user, message: message});
+			}
+		}
+		socket.on('message', (data) => {
+			console.log(`${data.user}: ${data.message}`);
+		});
+
+		socket.on('info', (message) => {
+			console.log(message);
+		});
+
+
+		function login(user) {
+			socket.emit('login', user);
+		}
+		socket.on('login', (data) => {
+				if(data.err) {
+					console.log('Error login:', data.err);	
+				} else {
+					console.log(`User "${data.user}" enter to the chat`);
+					user = data.user;
+				}
+		});
+
+		function logout() {
+			socket.emit('logout', user);
+		}
+		socket.on('logout', (data) => {
+				if(data.err) {
+					console.log('Error logout:', data.err);	
+				} else {
+					console.log(`User "${data.user}" exit from the chat`);
+					user = undefined;
+				}
+		});
+
+		// rooms
+
+		function messageRoom(room, message) {
+			if(user == undefined) {
+				console.log('User is undefined. Must do command: login("user_name_here")');
+			} else {
+				socket.emit('messageRoom', {room: room, user: user, message: message});
+			}
+		}
+		socket.on('messageRoom', (data) => {
+			console.log(`${data.room}.${data.user}: ${data.message}`);
+		});
+
+		function enterRoom(room) {
+			if(user == undefined) {
+				console.log('User is undefined. Must do command: login("user_name_here")');
+				return;
+			}
+			socket.emit('enterRoom', {room: room, user: user});
+		}
+		socket.on('enterRoom', (data) => {
+			console.log(data);
+		});
+
+		function exitRoom(room) {
+			if(user == undefined) {
+				console.log('User is undefined. Must do command: login("user_name_here")');
+				return;
+			}
+			socket.emit('exitRoom', {room: room, user: user});
+		}
+		socket.on('exitRoom', (data) => {
+			console.log(data);
+		});
+
+		
+		/*
+		function showRooms() {
+			socket.emit('showRooms');
+		}
+		socket.on('showRooms', () = > {
+		});
+
+		function inRoom(name) {
+			socket.emit('showRoom', {room: name});
+		}
+		socket.on('inRoom', () = > {
+		});
+
+		*/
+
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>
