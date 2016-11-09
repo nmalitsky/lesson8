@@ -4,28 +4,36 @@
 	<script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
 	<script>
 	        let user;
+		let room;
 		
 		let socket = io('http://localhost:3000');
 
 		socket.on('connect' , () => {
-			console.log('connect to the chat server - open socket');
+			console.log('You are connect to the chat server (open websocket) now');
 		});
 
 		function message(message) {
 			if(user == undefined) {
 				console.log('User is undefined. Must do command: login("user_name_here")');
-			} else {
+				return;
+			}
+			if(room == undefined) {
 				socket.emit('message', {user: user, message: message});
+			} else {
+				socket.emit('message', {room: room, user: user, message: message});
 			}
 		}
 		socket.on('message', (data) => {
-			console.log(`${data.user}: ${data.message}`);
+			if(room == undefined) {
+				console.log(`${data.user}: ${data.message}`);
+			} else {
+				console.log(`${data.room}.${data.user}: ${data.message}`);
+			}
 		});
 
 		socket.on('info', (message) => {
 			console.log(message);
 		});
-
 
 		function login(user) {
 			socket.emit('login', user);
@@ -52,18 +60,6 @@
 		});
 
 		// rooms
-
-		function messageRoom(room, message) {
-			if(user == undefined) {
-				console.log('User is undefined. Must do command: login("user_name_here")');
-			} else {
-				socket.emit('messageRoom', {room: room, user: user, message: message});
-			}
-		}
-		socket.on('messageRoom', (data) => {
-			console.log(`${data.room}.${data.user}: ${data.message}`);
-		});
-
 		function enterRoom(room) {
 			if(user == undefined) {
 				console.log('User is undefined. Must do command: login("user_name_here")');
@@ -72,6 +68,7 @@
 			socket.emit('enterRoom', {room: room, user: user});
 		}
 		socket.on('enterRoom', (data) => {
+			room = data.room;
 			console.log(data);
 		});
 
@@ -84,24 +81,8 @@
 		}
 		socket.on('exitRoom', (data) => {
 			console.log(data);
+			room = undefined;
 		});
-
-		
-		/*
-		function showRooms() {
-			socket.emit('showRooms');
-		}
-		socket.on('showRooms', () = > {
-		});
-
-		function inRoom(name) {
-			socket.emit('showRoom', {room: name});
-		}
-		socket.on('inRoom', () = > {
-		});
-
-		*/
-
 
 	</script>
 </head>

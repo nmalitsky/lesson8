@@ -40,26 +40,24 @@ io.on('connection', function (socket) {
 		socket.emit('logout', { user: user });
 	} else {
 		let err = `User '${user}' not connected to the chat`;
-		socket.emit('logout', { err: err});
+		socket.emit('logout', { err: err });
 	}
 
     });
 
     socket.on('message', (data) => {
-	io.sockets.emit('message', data);
-    });
-
-    // rooms
-    socket.on('messageRoom', (data) => {
-	io.to(data.room).emit('messageRoom', data);
+	if(data.room) io.to(data.room).emit('message', data);
+	else io.sockets.emit('message', data);
     });
 
     socket.on('enterRoom', (data) => {
 	socket.join(data.room);
+	socket.emit('enterRoom');
     });
 
     socket.on('exitRoom', (data) => {
 	socket.leave(data.room);
+	socket.emit('exitRoom');
     });
 
 });
