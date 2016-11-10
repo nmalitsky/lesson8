@@ -52,12 +52,14 @@ io.on('connection', function (socket) {
 
     socket.on('enterRoom', (data) => {
 	socket.join(data.room);
-	socket.emit('enterRoom');
+	socket.broadcast.to(data.room).emit('info', `User '${data.user}' enter to the room '${data.room}'`)
+	socket.emit('enterRoom', data);
     });
 
     socket.on('exitRoom', (data) => {
+	socket.broadcast.to(data.room).emit('info', `User '${data.user}' exit from the room '${data.room}'`)
 	socket.leave(data.room);
-	socket.emit('exitRoom');
+	socket.emit('exitRoom', data);
     });
 
 });

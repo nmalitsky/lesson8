@@ -22,12 +22,15 @@
 			} else {
 				socket.emit('message', {room: room, user: user, message: message});
 			}
+			return ''; // hack for dev console - remove undefined
 		}
 		socket.on('message', (data) => {
-			if(room == undefined) {
+			if(user == undefined) return; // not read message before do login
+
+			if(room == undefined) { // top chat
 				console.log(`${data.user}: ${data.message}`);
-			} else {
-				console.log(`${data.room}.${data.user}: ${data.message}`);
+			} else { // room
+				if(data.room == room) console.log(`${data.room}.${data.user}: ${data.message}`);
 			}
 		});
 
@@ -37,6 +40,7 @@
 
 		function login(user) {
 			socket.emit('login', user);
+			return ''; // hack for dev console - remove undefined
 		}
 		socket.on('login', (data) => {
 				if(data.err) {
@@ -49,6 +53,7 @@
 
 		function logout() {
 			socket.emit('logout', user);
+			return ''; // hack for dev console - remove undefined
 		}
 		socket.on('logout', (data) => {
 				if(data.err) {
@@ -66,21 +71,29 @@
 				return;
 			}
 			socket.emit('enterRoom', {room: room, user: user});
+			return ''; // hack for dev console - remove undefined
 		}
 		socket.on('enterRoom', (data) => {
 			room = data.room;
-			console.log(data);
+			console.log(`User '${data.user}' enter to the room '${data.room}'`);
 		});
 
-		function exitRoom(room) {
+		function exitRoom() {
 			if(user == undefined) {
 				console.log('User is undefined. Must do command: login("user_name_here")');
 				return;
 			}
+
+			if(room == undefined) {
+				console.log(`Room for user ${user} is not defined. Must do command: enterRoom("room_name_here")`);
+				return;
+			}
+
 			socket.emit('exitRoom', {room: room, user: user});
+			return ''; // hack for dev console - remove undefined
 		}
 		socket.on('exitRoom', (data) => {
-			console.log(data);
+			console.log(`User '${data.user}' exit from the room '${data.room}'`);
 			room = undefined;
 		});
 
